@@ -37,16 +37,14 @@ public class JsonArrayParser<E, T extends Collection<@Nullable E>> implements Co
     @Nullable T col = this.collectionFactory.get();
     JsonSyntaxReader syntaxReader = context.syntaxReader();
     syntaxReader.expectSymbol(context, JsonSymbol.SQUARE_OPEN);
-    syntaxReader.readAndSkip(context, Character::isWhitespace);
     boolean hasInserted = false;
     while (true) {
-      while (Character.isWhitespace(context.current()))
-        context.next();
+      syntaxReader.nextAndSkip(context, Character::isWhitespace);
       if (JsonSymbol.SQUARE_CLOSE.matches(context.current()))
         break;
       if (hasInserted) {
         syntaxReader.expectSymbol(context, JsonSymbol.COMMA);
-        syntaxReader.readAndSkip(context, Character::isWhitespace);
+        syntaxReader.nextAndSkip(context, Character::isWhitespace);
       }
       col.add(elementParser.parse(context));
       hasInserted = true;

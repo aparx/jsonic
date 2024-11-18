@@ -32,9 +32,21 @@ public class DefaultJsonSyntaxReader implements JsonSyntaxReader {
   }
 
   @Override
-  public void readAndSkip(JsonParseContext ctx, CharacterPredicate skipPredicate) {
+  public void nextAndSkip(JsonParseContext ctx, CharacterPredicate skipPredicate) {
     //noinspection StatementWithEmptyBody
     while (ctx.hasNext() && skipPredicate.test(ctx.next())) ;
+  }
+
+  public void read(JsonParseContext context, SyntaxReadPredicate predicate) {
+    int lastChar = JsonParseContext.NULL_CHARACTER;
+    boolean hasPeekedOnce = false;
+    for (int ch = context.current(); ch != JsonParseContext.NULL_CHARACTER; ) {
+      if (!predicate.test(lastChar, (char) ch))
+        break;
+      if (hasPeekedOnce) context.next(); // continue skip
+      ch = context.peek();
+      hasPeekedOnce = true;
+    }
   }
 
   @Override

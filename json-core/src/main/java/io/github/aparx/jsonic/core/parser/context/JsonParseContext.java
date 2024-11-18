@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 public class JsonParseContext implements JsonCharSource {
 
   /** Integer representing an illegal character (representing a void, thus "null", character) */
-  private static final int NULL_CHARACTER = -1;
+  public static final int NULL_CHARACTER = -1;
 
   private final JsonCharSource source;
   private final JsonSyntaxReader syntaxReader;
@@ -46,6 +46,10 @@ public class JsonParseContext implements JsonCharSource {
   @Override
   public boolean hasNext() {
     return this.hasPeeked || this.source.hasNext();
+  }
+
+  public boolean hasRead() {
+    return this.currentChar != JsonParseContext.NULL_CHARACTER;
   }
 
   @Override
