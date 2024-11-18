@@ -25,56 +25,58 @@ public class TestJsonArrayParser {
 
   private static final Random GEN_RANDOM = new Random(38656245L);
 
-  private final JsonArrayParser<String, List<String>> strParser = JsonParserFactory.stringArray();
+  private final JsonArrayParser<String, List<String>> stringParser =
+      JsonParserFactory.stringArray();
 
-  private final JsonArrayParser<String, List<String>> parser = JsonParserFactory.array((ctx) -> {
-    // The elements of this array should only be considered valid when: ['z'>=x>='a']
-    // Optionally, one can ensure that the returning string is not empty, to disallow invalid
-    // syntax, which would result in parse("[A]") throwing the error thrown in here.
-    return ctx.syntaxReader().accumulate(ctx, (__, x) -> x >= 'a' && x <= 'z');
-  });
+  private final JsonArrayParser<String, List<String>> simpleParser =
+      JsonParserFactory.array((ctx) -> {
+        // The elements of this array should only be considered valid when: ['z'>=x>='a']
+        // Optionally, one can ensure that the returning string is not empty, to disallow invalid
+        // syntax, which would result in parse("[A]") throwing the error thrown in here.
+        return ctx.syntaxReader().accumulate(ctx, (__, x) -> x >= 'a' && x <= 'z');
+      });
 
   @Test
   public void testParse_WrongSyntaxThrowsErrors() {
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.parser, "[foo"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.parser, "foo]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.parser, " [foo]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.parser, "[foo bar]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.parser, "[foo bar]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.parser, "[foo, bar"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.parser, "foo, bar]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "[foo"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "foo]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, " [foo]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "[foo bar]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "[foo bar]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "[foo, bar"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "foo, bar]"));
   }
 
   @Test
   public void testParse_RightSyntaxReturnsRightResults() {
-    Assert.assertEquals(List.of(), parse(this.parser, "[]"));
-    Assert.assertEquals(List.of("a"), parse(this.parser, "[a]"));
-    Assert.assertEquals(List.of("foo"), parse(this.parser, "[foo]"));
-    Assert.assertEquals(List.of("foo", "bar"), parse(this.parser, "[foo, bar]"));
-    Assert.assertEquals(List.of("foo", "bar", ""), parse(this.parser, "[foo, bar,]"));
-    Assert.assertEquals(List.of("foo", "bar", "baz"), parse(this.parser, "[foo, bar, baz]"));
+    Assert.assertEquals(List.of(), parse(this.simpleParser, "[]"));
+    Assert.assertEquals(List.of("a"), parse(this.simpleParser, "[a]"));
+    Assert.assertEquals(List.of("foo"), parse(this.simpleParser, "[foo]"));
+    Assert.assertEquals(List.of("foo", "bar"), parse(this.simpleParser, "[foo, bar]"));
+    Assert.assertEquals(List.of("foo", "bar", ""), parse(this.simpleParser, "[foo, bar,]"));
+    Assert.assertEquals(List.of("foo", "bar", "baz"), parse(this.simpleParser, "[foo, bar, baz]"));
   }
 
   @Test
   public void testParseStringArray_WrongSyntaxThrowsError() {
-    Assert.assertThrows(RuntimeException.class, () -> parse(strParser, "["));
-    Assert.assertThrows(RuntimeException.class, () -> parse(strParser, "]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(strParser, "[\"]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(strParser, "[\"\\\"]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(strParser, "[\"hello]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(strParser, "[world\"]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(strParser, "[\\\"world\"]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "["));
+    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[\"]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[\"\\\"]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[\"hello]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[world\"]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[\\\"world\"]"));
   }
 
   @Test
   public void testParseStringArray_RightSyntaxReturnsRightResults() {
-    Assert.assertEquals(List.of(), parse(strParser, "[]"));
-    Assert.assertEquals(List.of(""), parse(strParser, "[\"\"]"));
-    Assert.assertEquals(List.of("a"), parse(strParser, "[\"a\"]"));
-    Assert.assertEquals(List.of("hello"), parse(strParser, "[\"hello\"]"));
-    Assert.assertEquals(List.of("a", "b"), parse(strParser, "[\"a\", \"b\"]"));
+    Assert.assertEquals(List.of(), parse(stringParser, "[]"));
+    Assert.assertEquals(List.of(""), parse(stringParser, "[\"\"]"));
+    Assert.assertEquals(List.of("a"), parse(stringParser, "[\"a\"]"));
+    Assert.assertEquals(List.of("hello"), parse(stringParser, "[\"hello\"]"));
+    Assert.assertEquals(List.of("a", "b"), parse(stringParser, "[\"a\", \"b\"]"));
     Assert.assertEquals(List.of("hello", "world", "!"),
-        parse(strParser, "[\"hello\", \"world\", \"!\"]"));
+        parse(stringParser, "[\"hello\", \"world\", \"!\"]"));
   }
 
   @Test
@@ -82,30 +84,30 @@ public class TestJsonArrayParser {
     String simpleAlphabet = "abcdefghijklmnopqrstuvwxyz";
     String complexAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.,:;" +
         " \t";
-    for (int i = 0; i < 50; ++i) {
-      parseRandomArray(this.parser, simpleAlphabet, Function.identity());
-      parseRandomArray(strParser, complexAlphabet, (x) -> String.format("\"%s\"", x));
+    for (int i = 0; i < 50 /* RANDOM_ARRAY_ITERATIONS */; ++i) {
+      parseRandomArray(simpleParser, simpleAlphabet, Function.identity());
+      parseRandomArray(stringParser, complexAlphabet, (x) -> String.format("\"%s\"", x));
     }
   }
 
 
-  private List<String> parse(JsonArrayParser<String, List<String>> parser, CharSequence sequence) {
-    return parser.parse(JsonParseContextFactory.read(sequence));
-  }
-
   private void parseRandomArray(JsonArrayParser<String, List<String>> parser,
-                                String pool, Function<String, String> joinMapper) {
-    String[] strings = generateRandomArray(pool);
+                                String charPool, Function<String, String> joinMapper) {
+    String[] strings = generateRandomArray(charPool);
     String joint = Arrays.stream(strings).map(joinMapper).collect(Collectors.joining(", "));
     Assert.assertEquals(List.of(strings), this.parse(parser, '[' + joint + ']'));
     Assert.assertThrows(RuntimeException.class, () -> this.parse(parser, '[' + joint));
     Assert.assertThrows(RuntimeException.class, () -> this.parse(parser, joint + ']'));
   }
 
-  private String[] generateRandomArray(String pool) {
+  private List<String> parse(JsonArrayParser<String, List<String>> parser, CharSequence sequence) {
+    return parser.parse(JsonParseContextFactory.read(sequence));
+  }
+
+  private String[] generateRandomArray(String charPool) {
     String[] array = new String[GEN_RANDOM.nextInt(0, 100)];
     for (int i = 0; i < array.length; ++i)
-      array[i] = generateString(GEN_RANDOM.nextInt(5, 50), pool);
+      array[i] = generateString(GEN_RANDOM.nextInt(5, 50), charPool);
     return array;
   }
 
@@ -117,5 +119,6 @@ public class TestJsonArrayParser {
       array[length] = pool.charAt(GEN_RANDOM.nextInt(0, poolLength));
     return new String(array);
   }
+
 
 }
