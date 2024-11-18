@@ -19,38 +19,38 @@ public final class JsonParseContextFactory {
     throw new AssertionError();
   }
 
-  public static JsonParseContext of(JsonCharSource source, JsonSyntaxReader syntaxReader) {
+  public static JsonParseContext read(JsonCharSource source, JsonSyntaxReader syntaxReader) {
     JsonParseContext context = new JsonParseContext(source, syntaxReader);
     context.next(); // kickstart initialization by first read
     return context;
   }
 
-  public static JsonParseContext of(CharSequence source, JsonSyntaxReader syntaxReader) {
-    return of(JsonCharSourceFactory.from(source), syntaxReader);
+  public static JsonParseContext read(CharSequence source, JsonSyntaxReader syntaxReader) {
+    return read(JsonCharSourceFactory.from(source), syntaxReader);
   }
 
-  public static JsonParseContext of(InputStream source, JsonSyntaxReader syntaxReader) {
-    return of(JsonCharSourceFactory.from(source), syntaxReader);
+  public static JsonParseContext read(InputStream source, JsonSyntaxReader syntaxReader) {
+    return read(JsonCharSourceFactory.from(source), syntaxReader);
   }
 
-  public static JsonParseContext of(File source, JsonSyntaxReader syntaxReader) throws FileNotFoundException {
-    return of(JsonCharSourceFactory.from(source), syntaxReader);
+  public static JsonParseContext read(File source, JsonSyntaxReader syntaxReader) throws FileNotFoundException {
+    return read(JsonCharSourceFactory.from(source), syntaxReader);
   }
 
-  public static JsonParseContext of(JsonCharSource source) {
-    return of(source, DEFAULT_SYNTAX_READER);
+  public static JsonParseContext read(JsonCharSource source) {
+    return read(source, DEFAULT_SYNTAX_READER);
   }
 
-  public static JsonParseContext of(CharSequence source) {
-    return of(JsonCharSourceFactory.from(source), DEFAULT_SYNTAX_READER);
+  public static JsonParseContext read(CharSequence source) {
+    return read(JsonCharSourceFactory.from(source), DEFAULT_SYNTAX_READER);
   }
 
-  public static JsonParseContext of(InputStream source) {
-    return of(JsonCharSourceFactory.from(source), DEFAULT_SYNTAX_READER);
+  public static JsonParseContext read(InputStream source) {
+    return read(JsonCharSourceFactory.from(source), DEFAULT_SYNTAX_READER);
   }
 
-  public static JsonParseContext of(File source) throws FileNotFoundException {
-    return of(JsonCharSourceFactory.from(source), DEFAULT_SYNTAX_READER);
+  public static JsonParseContext read(File source) throws FileNotFoundException {
+    return read(JsonCharSourceFactory.from(source), DEFAULT_SYNTAX_READER);
   }
 
 }

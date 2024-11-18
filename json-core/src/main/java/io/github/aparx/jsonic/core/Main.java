@@ -18,10 +18,10 @@ public class Main {
 
   public static void main(String[] args) {
     var recordParser = JsonParserFactory.record(JsonStringParser.DEFAULT, JsonStringParser.DEFAULT);
-    System.out.println(recordParser.parse(JsonParseContextFactory.of("{\"hello\":\"world\"}")));
+    System.out.println(recordParser.parse(JsonParseContextFactory.read("{\"hello\":\"world\"}")));
 
     var arrayParser = JsonParserFactory.boolArray();
-    System.out.println(arrayParser.parse(JsonParseContextFactory.of("[true]")));
+    System.out.println(arrayParser.parse(JsonParseContextFactory.read("[true]")));
 
 
     JsonParser<?> parser =
@@ -38,7 +38,7 @@ public class Main {
                 ), newParser
             ).setStrict(true)
         ));
-    System.out.println(parser.parse(JsonParseContextFactory.of("{\"hello\":[\"world\"]," +
+    System.out.println(parser.parse(JsonParseContextFactory.read("{\"hello\":[\"world\"]," +
         "\"roles\":[\"Hello\"],[\"hello\"]:\"true\",[\"hello\"]:\"false\"}")));
   }
 }

@@ -46,7 +46,7 @@ public class TestJsonStringParser {
   }
 
   private String parse(CharSequence sequence) {
-    return stringParser.parse(JsonParseContextFactory.of(sequence));
+    return stringParser.parse(JsonParseContextFactory.read(sequence));
   }
 
 }

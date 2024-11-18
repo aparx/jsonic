@@ -1,6 +1,5 @@
 package io.github.aparx.jsonic.core.parser.context.tokens;
 
-import io.github.aparx.jsonic.core.parser.JsonParser;
 import io.github.aparx.jsonic.core.parser.context.JsonParseContextFactory;
 import io.github.aparx.jsonic.core.parser.context.JsonParserFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -47,7 +46,7 @@ public class TestJsonArrayParser {
   }
 
   private List<String> parse(CharSequence sequence) {
-    return parser.parse(JsonParseContextFactory.of(sequence));
+    return parser.parse(JsonParseContextFactory.read(sequence));
   }
 
 
