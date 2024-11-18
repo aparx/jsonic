@@ -47,7 +47,7 @@ public class JsonRecordParser<K, V> implements ComposableJsonParser<Map<@Nullabl
   public Map<@Nullable K, @Nullable V> parse(JsonParseContext context) {
     Map<@Nullable K, @Nullable V> map = this.mapFactory.get();
     JsonSyntaxReader syntaxReader = context.syntaxReader();
-    ParseErrorFactory errorHandler = syntaxReader.errorHandler();
+    ParseErrorFactory errorHandler = syntaxReader.errorFactory();
     syntaxReader.expectSymbol(context, JsonSymbol.CURLY_OPEN);
     while (context.hasNext()) {
       syntaxReader.readAndSkip(context, Character::isWhitespace);

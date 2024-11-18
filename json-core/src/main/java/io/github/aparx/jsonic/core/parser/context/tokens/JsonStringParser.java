@@ -23,7 +23,7 @@ public class JsonStringParser implements ComposableJsonParser<String> {
   @Override
   public String parse(JsonParseContext context) {
     JsonSyntaxReader syntaxReader = context.syntaxReader();
-    ParseErrorFactory errorHandler = syntaxReader.errorHandler();
+    ParseErrorFactory errorHandler = syntaxReader.errorFactory();
     syntaxReader.expectSymbol(context, JsonSymbol.DOUBLE_QUOTE);
     StringBuilder builder = new StringBuilder();
     char lastChar = context.current();

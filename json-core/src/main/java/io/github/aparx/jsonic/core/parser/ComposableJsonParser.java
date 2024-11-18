@@ -80,7 +80,7 @@ public interface ComposableJsonParser<T> extends JsonParser<T> {
             .orElseThrow(() -> {
               JsonSyntaxReader syntaxReader = context.syntaxReader();
               String message = String.format(UNEXPECTED_TOKEN, context.current());
-              return syntaxReader.errorHandler().createError(syntaxReader, context, message);
+              return syntaxReader.errorFactory().createError(syntaxReader, context, message);
             })).parse(context);
       }
     };

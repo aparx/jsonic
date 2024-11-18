@@ -14,7 +14,7 @@ import org.checkerframework.org.apache.commons.text.CharacterPredicate;
 @DefaultQualifier(NonNull.class)
 public interface JsonSyntaxReader {
 
-  ParseErrorFactory errorHandler();
+  ParseErrorFactory errorFactory();
 
   /**
    * Reads the next character and the next consecutive characters until {@code skipPredicate}
@@ -35,8 +35,8 @@ public interface JsonSyntaxReader {
    * </code></pre>
    *
    * @param context       the context, supplying the characters
-   * @param skipPredicate character predicate that causes this method to continuously read next
-   *                      the character, until it returns false
+   * @param skipPredicate character predicate that causes this method to continuously read the next
+   *                      character in {@code context}, until it returns false
    */
   void readAndSkip(JsonParseContext context, CharacterPredicate skipPredicate);
 

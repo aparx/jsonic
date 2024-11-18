@@ -26,7 +26,7 @@ public class DefaultSyntaxReader implements JsonSyntaxReader {
   }
 
   @Override
-  public ParseErrorFactory errorHandler() {
+  public ParseErrorFactory errorFactory() {
     return this.errorHandler;
   }
 

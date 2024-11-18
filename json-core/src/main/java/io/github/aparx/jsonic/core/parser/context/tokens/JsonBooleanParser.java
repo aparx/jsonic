@@ -30,7 +30,7 @@ public class JsonBooleanParser implements ComposableJsonParser<Boolean> {
         syntaxReader.expectLiteral(context, "false");
         return false;
     }
-    throw syntaxReader.errorHandler().createError(syntaxReader, context,
+    throw syntaxReader.errorFactory().createError(syntaxReader, context,
         String.format(ERROR_UNEXPECTED_TOKEN, context.current()));
   }
 
