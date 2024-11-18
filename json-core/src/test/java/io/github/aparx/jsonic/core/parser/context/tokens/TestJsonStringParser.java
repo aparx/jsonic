@@ -20,19 +20,23 @@ public class TestJsonStringParser {
   private final JsonStringParser stringParser = new JsonStringParser();
 
   @Test
-  public void testParseSyntaxIsEnforced() {
+  public void testParse_WrongSyntaxThrowsErrors() {
     Assert.assertThrows(RuntimeException.class, () -> parse("Hello"));
     Assert.assertThrows(RuntimeException.class, () -> parse("\"Hello"));
     Assert.assertThrows(RuntimeException.class, () -> parse("Hello\""));
     Assert.assertThrows(RuntimeException.class, () -> parse(" \"Hello\""));
     Assert.assertThrows(NoSuchElementException.class, () -> parse("\""));
+  }
+
+  @Test
+  public void testParse_RightSyntaxReturnsRightResults() {
     Assert.assertEquals("Hello", parse("\"Hello\""));
     Assert.assertEquals("foo bar baz", parse("\"foo bar baz\""));
     Assert.assertEquals("", parse("\"\""));
   }
 
   @Test
-  public void testParseAllowQuoteEscapeAndNewlines() {
+  public void testParse_AllowQuoteEscapeAndNewlines() {
     Assert.assertThrows(RuntimeException.class, () -> parse("\"Hello\\\""));
     Assert.assertThrows(RuntimeException.class, () -> parse("\\\"Hello\""));
     Assert.assertThrows(RuntimeException.class, () -> parse("\"He\\\"llo\\\""));
@@ -42,7 +46,7 @@ public class TestJsonStringParser {
   }
 
   @Test
-  public void testParseEnsureEarlyReturn() {
+  public void testParse_EnsureEarlyReturn() {
     Assert.assertEquals("this is some \"cool\" ", parse("\"this is some \\\"cool\\\" \"shizz\""));
   }
 
