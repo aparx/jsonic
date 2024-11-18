@@ -4,7 +4,7 @@ import io.github.aparx.jsonic.core.JsonSymbol;
 import io.github.aparx.jsonic.core.parser.ComposableJsonParser;
 import io.github.aparx.jsonic.core.parser.JsonParser;
 import io.github.aparx.jsonic.core.parser.error.ParseErrorFactory;
-import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverser;
 import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -44,30 +44,30 @@ public class JsonObjectParser<K, V> implements ComposableJsonParser<Map<@Nullabl
   }
 
   @Override
-  public Map<@Nullable K, @Nullable V> parse(JsonParseContext context) {
+  public Map<@Nullable K, @Nullable V> parse(
+      JsonCharSourceTraverser traverser, JsonSyntaxReader syntaxReader) {
     Map<@Nullable K, @Nullable V> map = this.mapFactory.get();
-    JsonSyntaxReader syntaxReader = context.syntaxReader();
     ParseErrorFactory errorHandler = syntaxReader.errorFactory();
-    syntaxReader.expectSymbol(context, JsonSymbol.CURLY_OPEN);
-    while (context.hasNext()) {
-      syntaxReader.nextAndSkip(context, Character::isWhitespace);
-      if (JsonSymbol.CURLY_CLOSE.matches(context.current())) break;
+    syntaxReader.expectSymbol(traverser, JsonSymbol.CURLY_OPEN);
+    while (traverser.hasNext()) {
+      syntaxReader.nextAndSkip(traverser, Character::isWhitespace);
+      if (JsonSymbol.CURLY_CLOSE.matches(traverser.current())) break;
       if (!map.isEmpty()) {
         // Handle separation of multiple KV-pairs
-        syntaxReader.expectSymbol(context, JsonSymbol.COMMA);
-        syntaxReader.nextAndSkip(context, Character::isWhitespace);
+        syntaxReader.expectSymbol(traverser, JsonSymbol.COMMA);
+        syntaxReader.nextAndSkip(traverser, Character::isWhitespace);
       }
-      @Nullable K key = this.keyParser.parse(context);
+      @Nullable K key = this.keyParser.parse(traverser, syntaxReader);
       if (this.strict && map.containsKey(key))
-        throw errorHandler.create(syntaxReader, context,
+        throw errorHandler.create(syntaxReader, traverser,
             String.format(DUPLICATE_KEY_ERROR, key));
-      syntaxReader.nextAndSkip(context, Character::isWhitespace);
-      syntaxReader.expectSymbol(context, JsonSymbol.COLON);
-      syntaxReader.nextAndSkip(context, Character::isWhitespace);
-      map.put(key, this.valueParser.parse(context));
+      syntaxReader.nextAndSkip(traverser, Character::isWhitespace);
+      syntaxReader.expectSymbol(traverser, JsonSymbol.COLON);
+      syntaxReader.nextAndSkip(traverser, Character::isWhitespace);
+      map.put(key, this.valueParser.parse(traverser, syntaxReader));
     }
-    syntaxReader.nextAndSkip(context, Character::isWhitespace);
-    syntaxReader.expectSymbol(context, JsonSymbol.CURLY_CLOSE);
+    syntaxReader.nextAndSkip(traverser, Character::isWhitespace);
+    syntaxReader.expectSymbol(traverser, JsonSymbol.CURLY_CLOSE);
     return map;
   }
 

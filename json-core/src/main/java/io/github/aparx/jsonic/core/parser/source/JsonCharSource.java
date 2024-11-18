@@ -1,4 +1,4 @@
-package io.github.aparx.jsonic.core.parser.context;
+package io.github.aparx.jsonic.core.parser.source;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;

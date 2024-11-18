@@ -1,5 +1,7 @@
 package io.github.aparx.jsonic.core.parser.context;
 
+import io.github.aparx.jsonic.core.parser.source.JsonCharSource;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceFactory;
 import org.junit.Assert;
 import org.junit.Test;
 

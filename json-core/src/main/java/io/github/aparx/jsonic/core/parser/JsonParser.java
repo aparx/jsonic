@@ -1,10 +1,20 @@
 package io.github.aparx.jsonic.core.parser;
 
-import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
+import io.github.aparx.jsonic.core.parser.error.JsonParseError;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverser;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverserFactory;
+import io.github.aparx.jsonic.core.parser.syntax.DefaultJsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.com.google.common.base.Preconditions;
 import org.checkerframework.com.google.errorprone.annotations.CheckReturnValue;
 import org.checkerframework.framework.qual.DefaultQualifier;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.NoSuchElementException;
 
 /**
  * @author aparx (Vinzent Z.)
@@ -16,26 +26,70 @@ import org.checkerframework.framework.qual.DefaultQualifier;
 public interface JsonParser<T> {
 
   /**
-   * Reads and parses {@code context} into an object {@code T}, or throws an error when the context
-   * could not be parsed as intended.
+   * Reads and parses {@code traverser} into an object {@code T}, or throws an error when the
+   * traverser could not be parsed as intended.
    * <p>This parser begins with the current character and ends with the last character valid for
    * this parser, commonly being a JsonSymbol determining the exit of this parser.
    * <p>Example: Assuming we allow to parse a JSON string, following this syntax:
    * {@code Pattern.compile("\"[a-z]*\"")} the following code results in following:
    * <pre><code>
-   *   var ctx = JsonParseContextFactory.read("\"hello\"");
-   *   parse(ctx);    ::= "hello"
+   *   var traverser = JsonCharSourceTraverserFactory.read("\"hello\"");
+   *   parse(traverser, syntaxReader);    ::= "hello"
    *   ctx.current(); ::= '"'
    *
-   *   var ctx = JsonParseContextFactory.read("\"hellO\"");
-   *   parse(ctx);    ::= should throw error
-   *   ctx.current(); ::= 'l'
+   *   var traverser = JsonCharSourceTraverserFactory.read("\"hellO\"");
+   *   parse(traverser, syntaxReader);    ::= should throw error
+   *   traverser.current(); ::= 'l'
    * </code></pre>
    *
-   * @param context the context, supplying the data necessary to parse
+   * @param traverser    the traverser, supplying the data necessary to parse
+   * @param syntaxReader the syntax reader used to read and validate specific parts of the traverser
    * @return the parsed object, {@code nullable}
+   * @throws JsonParseError         if {@code traverser} could not be parsed as intended
+   * @throws NoSuchElementException if no characters were left in {@code traverser}
    */
   @CheckReturnValue
-  @Nullable T parse(JsonParseContext context);
+  @Nullable T parse(JsonCharSourceTraverser traverser, JsonSyntaxReader syntaxReader);
+
+  static <@Nullable T> @Nullable T parse(JsonParser<T> parser, JsonCharSourceTraverser traverser) {
+    Preconditions.checkState(traverser.hasRead(), "Traverser has not been read");
+    return parser.parse(traverser, DefaultJsonSyntaxReader.DEFAULT);
+  }
+
+  static <@Nullable T> @Nullable T parse(JsonParser<T> parser, JsonCharSourceTraverser traverser,
+                                         JsonSyntaxReader syntaxReader) {
+    Preconditions.checkState(traverser.hasRead(), "Traverser has not been read");
+    return parser.parse(traverser, syntaxReader);
+  }
+
+  static <@Nullable T> @Nullable T parse(JsonParser<T> parser, CharSequence sequence) {
+    return parse(parser, JsonCharSourceTraverserFactory.read(sequence));
+  }
+
+  static <@Nullable T> @Nullable T parse(
+      JsonParser<T> parser, CharSequence sequence, JsonSyntaxReader syntaxReader) {
+    return parse(parser, JsonCharSourceTraverserFactory.read(sequence), syntaxReader);
+  }
+
+  static <@Nullable T> @Nullable T parse(JsonParser<T> parser, InputStream inputStream) {
+    return parse(parser, JsonCharSourceTraverserFactory.read(inputStream));
+  }
+
+  static <@Nullable T> @Nullable T parse(
+      JsonParser<T> parser, InputStream inputStream, JsonSyntaxReader syntaxReader) {
+    return parse(parser, JsonCharSourceTraverserFactory.read(inputStream), syntaxReader);
+  }
+
+  static <@Nullable T> @Nullable T parse(
+      JsonParser<T> parser, File file
+  ) throws FileNotFoundException {
+    return parse(parser, JsonCharSourceTraverserFactory.read(file));
+  }
+
+  static <@Nullable T> @Nullable T parse(
+      JsonParser<T> parser, File file, JsonSyntaxReader syntaxReader
+  ) throws FileNotFoundException {
+    return parse(parser, JsonCharSourceTraverserFactory.read(file), syntaxReader);
+  }
 
 }

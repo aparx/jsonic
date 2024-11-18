@@ -1,7 +1,9 @@
 package io.github.aparx.jsonic.core.parser.context.tokens;
 
-import io.github.aparx.jsonic.core.parser.context.JsonParseContextFactory;
+import io.github.aparx.jsonic.core.parser.JsonParser;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverserFactory;
 import io.github.aparx.jsonic.core.parser.error.JsonParseError;
+import io.github.aparx.jsonic.core.parser.syntax.DefaultJsonSyntaxReader;
 import io.github.aparx.jsonic.core.parser.tokens.JsonStringParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
@@ -18,49 +20,48 @@ import java.util.NoSuchElementException;
 @DefaultQualifier(NonNull.class)
 public class TestJsonStringParser {
 
-  private final JsonStringParser stringParser = new JsonStringParser();
+  private final JsonStringParser parser = new JsonStringParser();
 
   @Test
   public void testParse_WrongSyntaxThrowsErrors() {
-    Assert.assertThrows(JsonParseError.class, () -> parse("Hello"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\"Hello"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("Hello\""));
-    Assert.assertThrows(JsonParseError.class, () -> parse(" \"Hello\""));
-    Assert.assertThrows(NoSuchElementException.class, () -> parse("\""));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "Hello"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\"Hello"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "Hello\""));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, " \"Hello\""));
+    Assert.assertThrows(NoSuchElementException.class, () -> JsonParser.parse(parser, "\""));
   }
 
   @Test
   public void testParse_RightSyntaxReturnsRightResults() {
-    Assert.assertEquals("Hello", parse("\"Hello\""));
-    Assert.assertEquals("foo bar baz", parse("\"foo bar baz\""));
-    Assert.assertEquals("", parse("\"\""));
+    Assert.assertEquals("Hello", JsonParser.parse(parser, "\"Hello\""));
+    Assert.assertEquals("foo bar baz", JsonParser.parse(parser, "\"foo bar baz\""));
+    Assert.assertEquals("", JsonParser.parse(parser, "\"\""));
   }
 
   @Test
   public void testParse_AllowQuoteEscapeAndNewlines() {
-    Assert.assertThrows(JsonParseError.class, () -> parse("\"Hello\\\""));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\\\"Hello\""));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\"He\\\"llo\\\""));
-    Assert.assertEquals("the name is \"cool\"", parse("\"the name is \\\"cool\\\"\""));
-    Assert.assertEquals("a new \n newline", parse("\"a new \n newline\""));
-    Assert.assertEquals("\t\n", parse("\"\t\n\""));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\"Hello\\\""));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\\\"Hello\""));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\"He\\\"llo\\\""));
+    Assert.assertEquals("the name is \"cool\"",
+        JsonParser.parse(parser, "\"the name is \\\"cool\\\"\""));
+    Assert.assertEquals("a new \n newline", JsonParser.parse(parser, "\"a new \n newline\""));
+    Assert.assertEquals("\t\n", JsonParser.parse(parser, "\"\t\n\""));
   }
 
   @Test
   public void testParse_EnsureEarlyReturn() {
-    Assert.assertEquals("this is some \"cool\" ", parse("\"this is some \\\"cool\\\" \"shizz\""));
+    Assert.assertEquals("this is some \"cool\" ",
+        JsonParser.parse(parser, "\"this is some \\\"cool\\\" \"shizz\""));
   }
 
   @Test
   @SuppressWarnings("DataFlowIssue")
   public void testParse_EmptyThrowsError() {
-    Assert.assertThrows(RuntimeException.class, () -> parse(""));
-    Assert.assertThrows(RuntimeException.class, () -> parse("\u0000"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(null));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(parser, ""));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(parser, "\u0000"));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(parser, (String) null));
   }
 
-  private String parse(CharSequence sequence) {
-    return stringParser.parse(JsonParseContextFactory.read(sequence));
-  }
 
 }

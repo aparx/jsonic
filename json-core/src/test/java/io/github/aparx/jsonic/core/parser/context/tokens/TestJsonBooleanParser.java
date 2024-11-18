@@ -1,13 +1,13 @@
 package io.github.aparx.jsonic.core.parser.context.tokens;
 
-import io.github.aparx.jsonic.core.parser.context.JsonParseContextFactory;
+import io.github.aparx.jsonic.core.parser.JsonParser;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverserFactory;
 import io.github.aparx.jsonic.core.parser.error.JsonParseError;
-import io.github.aparx.jsonic.core.parser.tokens.JsonArrayParser;
+import io.github.aparx.jsonic.core.parser.syntax.DefaultJsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import io.github.aparx.jsonic.core.parser.tokens.JsonBooleanParser;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * @author aparx (Vinzent Z.)
@@ -20,52 +20,49 @@ public class TestJsonBooleanParser {
 
   @Test
   public void testParse_WrongSyntaxThrowsError() {
-    Assert.assertThrows(JsonParseError.class, () -> parse("TRUE"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("tRue"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("tRUe"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("trUE"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("truE"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("True"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(" true"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\ttrue"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\r\ntrue"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\u0000true"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "TRUE"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "tRue"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "tRUe"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "trUE"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "truE"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "True"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, " true"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\ttrue"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\r\ntrue"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\u0000true"));
 
-    Assert.assertThrows(JsonParseError.class, () -> parse("FALSE"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("fAlse"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("fALse"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("falSE"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("falsE"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("False"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(" false"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\tfalse"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\r\nfalse"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\u0000false"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "FALSE"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "fAlse"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "fALse"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "falSE"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "falsE"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "False"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, " false"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\tfalse"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\r\nfalse"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\u0000false"));
   }
 
   @Test
   public void testParse_RightSyntaxReturnsRightResults() {
-    Assert.assertEquals(true, parse("true"));
-    Assert.assertEquals(false, parse("false"));
+    Assert.assertEquals(true, JsonParser.parse(parser, "true"));
+    Assert.assertEquals(false, JsonParser.parse(parser, "false"));
   }
 
   @Test
   public void testParse_EnsureEarlyReturn() {
-    Assert.assertEquals(false, parse("false\t"));
-    Assert.assertEquals(true, parse("true\t"));
-    Assert.assertEquals(true, parse("trueSOME_OTHER_THINGS"));
-    Assert.assertEquals(false, parse("falseSOME_OTHER_THINGS"));
+    Assert.assertEquals(false, JsonParser.parse(parser, "false\t"));
+    Assert.assertEquals(true, JsonParser.parse(parser, "true\t"));
+    Assert.assertEquals(true, JsonParser.parse(parser, "trueSOME_OTHER_THINGS"));
+    Assert.assertEquals(false, JsonParser.parse(parser, "falseSOME_OTHER_THINGS"));
   }
 
   @Test
+  @SuppressWarnings("DataFlowIssue")
   public void testParse_EmptyThrowsError() {
-    Assert.assertThrows(RuntimeException.class, () -> parse(""));
-    Assert.assertThrows(RuntimeException.class, () -> parse("\u0000"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(null));
-  }
-
-  private Boolean parse(CharSequence sequence) {
-    return parser.parse(JsonParseContextFactory.read(sequence));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(parser, ""));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(parser, "\u0000"));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(parser, (String) null));
   }
 
 }

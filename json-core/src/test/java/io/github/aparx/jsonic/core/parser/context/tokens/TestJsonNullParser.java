@@ -1,7 +1,10 @@
 package io.github.aparx.jsonic.core.parser.context.tokens;
 
-import io.github.aparx.jsonic.core.parser.context.JsonParseContextFactory;
+import io.github.aparx.jsonic.core.parser.JsonParser;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverserFactory;
 import io.github.aparx.jsonic.core.parser.error.JsonParseError;
+import io.github.aparx.jsonic.core.parser.syntax.DefaultJsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import io.github.aparx.jsonic.core.parser.tokens.JsonNullParser;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,41 +20,39 @@ public class TestJsonNullParser {
 
   @Test
   public void testParse_WrongSyntaxThrowsError() {
-    Assert.assertThrows(JsonParseError.class, () -> parse("nil"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("NULL"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("nul"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("nULl"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("nUll"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("nuLL"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("nulL"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("Null"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\tnull"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\r\nnull"));
-    Assert.assertThrows(JsonParseError.class, () -> parse("\u0000null"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "nil"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "NULL"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "nul"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "nULl"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "nUll"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "nuLL"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "nulL"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "Null"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\tnull"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\r\nnull"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, "\u0000null"));
   }
 
   @Test
   public void testParse_RightSyntaxReturnsRightResult() {
-    Assert.assertNull(parse("null"));
+    Assert.assertNull(JsonParser.parse(parser, "null"));
   }
 
   @Test
   public void testParse_EnsureEarlyReturn() {
-    Assert.assertNull(parse("null\t"));
-    Assert.assertNull(parse("null\t"));
-    Assert.assertNull(parse("nullSOME_OTHER_THINGS"));
-    Assert.assertNull(parse("nullSOME_OTHER_THINGS"));
+    Assert.assertNull(JsonParser.parse(parser, "null\t"));
+    Assert.assertNull(JsonParser.parse(parser, "null\t"));
+    Assert.assertNull(JsonParser.parse(parser, "nullSOME_OTHER_THINGS"));
+    Assert.assertNull(JsonParser.parse(parser, "nullSOME_OTHER_THINGS"));
   }
 
   @Test
+  @SuppressWarnings("DataFlowIssue")
   public void testParse_EmptyThrowsError() {
-    Assert.assertThrows(RuntimeException.class, () -> parse(""));
-    Assert.assertThrows(RuntimeException.class, () -> parse("\u0000"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(null));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(parser, ""));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(parser, "\u0000"));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(parser, (String) null));
   }
 
-  private Object parse(CharSequence sequence) {
-    return parser.parse(JsonParseContextFactory.read(sequence));
-  }
 
 }

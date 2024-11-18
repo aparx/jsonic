@@ -1,6 +1,6 @@
 package io.github.aparx.jsonic.core.parser;
 
-import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverser;
 import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -27,7 +27,7 @@ public interface ComposableJsonParser<T> extends JsonParser<T> {
    * used to determine which parser to use in a composed set of parsers.
    * <p>This function is idempotent and pure.
    *
-   * @param currentChar the current character, for example from a context
+   * @param currentChar the current character, for example from a traverser
    * @param nextChar    the potential next character in the source, or {@code -1} if not available
    * @return true if this parser might have a higher chance of succeeding based on given inputs
    */
@@ -35,7 +35,7 @@ public interface ComposableJsonParser<T> extends JsonParser<T> {
 
   /**
    * Returns a new parser that automatically determines which one of given parsers to use, using
-   * the {@code couldParse} method with the current and peeked character of the input context.
+   * the {@code couldParse} method with the current and peeked character of the input traverser.
    * <p>If two parsers have an equal {@code couldParse} implementation or both would return true
    * for the same inputs, the first in order is used. Thus, it is very important to ensure that
    * the passed parsers differ in their identification process.
@@ -52,7 +52,7 @@ public interface ComposableJsonParser<T> extends JsonParser<T> {
 
   /**
    * Returns a new parser that automatically determines which one of given parsers to use, using
-   * the {@code couldParse} method with the current and peeked character of the input context.
+   * the {@code couldParse} method with the current and peeked character of the input traverser.
    * <p>If two parsers have an equal {@code couldParse} implementation or both would return true
    * for the same inputs, the first in order is used. Thus, it is very important to ensure that
    * the passed parsers differ in their identification process.
@@ -71,15 +71,14 @@ public interface ComposableJsonParser<T> extends JsonParser<T> {
       private final Collection<ComposableJsonParser<?>> parsers = factory.apply(this);
 
       @Override
-      public @Nullable Object parse(JsonParseContext context) {
+      public @Nullable Object parse(JsonCharSourceTraverser traverser, JsonSyntaxReader reader) {
         return (parsers.stream()
-            .filter((x) -> x.couldParse(context.current(), context.peek()))
+            .filter((x) -> x.couldParse(traverser.current(), traverser.peek()))
             .findFirst()
             .orElseThrow(() -> {
-              JsonSyntaxReader syntaxReader = context.syntaxReader();
-              String message = String.format("Unexpected token: %s", context.current());
-              return syntaxReader.errorFactory().create(syntaxReader, context, message);
-            })).parse(context);
+              String message = String.format("Unexpected token: %s", traverser.current());
+              return reader.errorFactory().create(reader, traverser, message);
+            })).parse(traverser, reader);
       }
     };
   }

@@ -3,7 +3,7 @@ package io.github.aparx.jsonic.core.parser.tokens;
 import io.github.aparx.jsonic.core.JsonSymbol;
 import io.github.aparx.jsonic.core.parser.ComposableJsonParser;
 import io.github.aparx.jsonic.core.parser.error.ParseErrorFactory;
-import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverser;
 import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
@@ -21,25 +21,24 @@ public class JsonStringParser implements ComposableJsonParser<String> {
   public static final char QUOTE_ESCAPE = '\\';
 
   @Override
-  public String parse(JsonParseContext context) {
-    JsonSyntaxReader syntaxReader = context.syntaxReader();
+  public String parse(JsonCharSourceTraverser traverser, JsonSyntaxReader syntaxReader) {
     ParseErrorFactory errorHandler = syntaxReader.errorFactory();
-    syntaxReader.expectSymbol(context, JsonSymbol.DOUBLE_QUOTE);
+    syntaxReader.expectSymbol(traverser, JsonSymbol.DOUBLE_QUOTE);
     StringBuilder builder = new StringBuilder();
-    char lastChar = context.current();
+    char lastChar = traverser.current();
     do {
-      char nextChar = context.next();
+      char nextChar = traverser.next();
       if (JsonSymbol.DOUBLE_QUOTE.matches(nextChar)
-          && (lastChar != QUOTE_ESCAPE || !context.hasNext()))
+          && (lastChar != QUOTE_ESCAPE || !traverser.hasNext()))
         break;
       lastChar = nextChar;
-      if (nextChar == QUOTE_ESCAPE && JsonSymbol.DOUBLE_QUOTE.matches(context.peek()))
+      if (nextChar == QUOTE_ESCAPE && JsonSymbol.DOUBLE_QUOTE.matches(traverser.peek()))
         continue; // Omit the escaping character from plaintext
       builder.append(nextChar);
-    } while (context.hasNext());
+    } while (traverser.hasNext());
     if (lastChar == QUOTE_ESCAPE)
-      throw errorHandler.create(syntaxReader, context, "Last double quote is escaped");
-    syntaxReader.expectSymbol(context, JsonSymbol.DOUBLE_QUOTE);
+      throw errorHandler.create(syntaxReader, traverser, "Last double quote is escaped");
+    syntaxReader.expectSymbol(traverser, JsonSymbol.DOUBLE_QUOTE);
     return builder.toString();
   }
 

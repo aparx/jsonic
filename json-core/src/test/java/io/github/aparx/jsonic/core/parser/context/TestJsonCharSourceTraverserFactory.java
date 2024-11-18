@@ -7,7 +7,7 @@ import org.junit.Test;
  * @version 2024-11-18 00:00
  * @since 1.0
  */
-public class TestJsonParseContextFactory {
+public class TestJsonCharSourceTraverserFactory {
 
   @Test
   public void testSequenceContext() {

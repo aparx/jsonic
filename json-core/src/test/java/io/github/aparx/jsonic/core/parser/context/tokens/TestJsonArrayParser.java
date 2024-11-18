@@ -1,8 +1,10 @@
 package io.github.aparx.jsonic.core.parser.context.tokens;
 
-import io.github.aparx.jsonic.core.parser.context.JsonParseContextFactory;
+import io.github.aparx.jsonic.core.parser.JsonParser;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverserFactory;
 import io.github.aparx.jsonic.core.parser.JsonParserFactory;
 import io.github.aparx.jsonic.core.parser.error.JsonParseError;
+import io.github.aparx.jsonic.core.parser.syntax.DefaultJsonSyntaxReader;
 import io.github.aparx.jsonic.core.parser.tokens.JsonArrayParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.com.google.common.base.Preconditions;
@@ -12,6 +14,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,58 +33,65 @@ public class TestJsonArrayParser {
       JsonParserFactory.stringArray();
 
   private final JsonArrayParser<String, List<String>> simpleParser =
-      JsonParserFactory.array((ctx) -> {
+      JsonParserFactory.array((ctx, syntaxReader) -> {
         // The elements of this array should only be considered valid when: ['z'>=x>='a']
         // Optionally, one can ensure that the returning string is not empty, to disallow invalid
         // syntax, which would result in parse("[A]") throwing the error thrown in here.
-        return ctx.syntaxReader().accumulate(ctx, (__, x) -> x >= 'a' && x <= 'z');
+        return syntaxReader.accumulate(ctx, (__, x) -> x >= 'a' && x <= 'z');
       });
 
   @Test
   public void testParse_WrongSyntaxThrowsErrors() {
-    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "[foo"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "foo]"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, " [foo]"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "[foo bar]"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "[foo bar]"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "[foo, bar"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "foo, bar]"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(this.simpleParser, "[foo"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(this.simpleParser, "foo]"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(this.simpleParser, " [foo]"));
+    Assert.assertThrows(JsonParseError.class,
+        () -> JsonParser.parse(this.simpleParser, "[foo bar]"));
+    Assert.assertThrows(JsonParseError.class,
+        () -> JsonParser.parse(this.simpleParser, "[foo bar]"));
+    Assert.assertThrows(JsonParseError.class,
+        () -> JsonParser.parse(this.simpleParser, "[foo, bar"));
+    Assert.assertThrows(JsonParseError.class,
+        () -> JsonParser.parse(this.simpleParser, "foo, bar]"));
   }
 
   @Test
   public void testParse_RightSyntaxReturnsRightResults() {
-    Assert.assertEquals(List.of(), parse(this.simpleParser, "[]"));
-    Assert.assertEquals(List.of("a"), parse(this.simpleParser, "[a]"));
-    Assert.assertEquals(List.of("foo"), parse(this.simpleParser, "[foo]"));
-    Assert.assertEquals(List.of("foo", "bar"), parse(this.simpleParser, "[foo, bar]"));
-    Assert.assertEquals(List.of("foo", "bar", ""), parse(this.simpleParser, "[foo, bar,]"));
-    Assert.assertEquals(List.of("foo", "bar", "baz"), parse(this.simpleParser, "[foo, bar, baz]"));
+    Assert.assertEquals(List.of(), JsonParser.parse(this.simpleParser, "[]"));
+    Assert.assertEquals(List.of("a"), JsonParser.parse(this.simpleParser, "[a]"));
+    Assert.assertEquals(List.of("foo"), JsonParser.parse(this.simpleParser, "[foo]"));
+    Assert.assertEquals(List.of("foo", "bar"), JsonParser.parse(this.simpleParser, "[foo, bar]"));
+    Assert.assertEquals(List.of("foo", "bar", ""),
+        JsonParser.parse(this.simpleParser, "[foo, bar,]"));
+    Assert.assertEquals(List.of("foo", "bar", "baz"),
+        JsonParser.parse(this.simpleParser, "[foo, bar, baz]"));
   }
 
   @Test
   public void testParseStringArray_WrongSyntaxThrowsError() {
-    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "["));
-    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "]"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[\"]"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[\"\\\"]"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[\"hello]"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[world\"]"));
-    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[\\\"world\"]"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(stringParser, "["));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(stringParser, "]"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(stringParser, "[\"]"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(stringParser, "[\"\\\"]"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(stringParser, "[\"hello]"));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(stringParser, "[world\"]"));
+    Assert.assertThrows(JsonParseError.class,
+        () -> JsonParser.parse(stringParser, "[\\\"world\"]"));
   }
 
   @Test
-  public void testParseStringArray_RightSyntaxReturnsRightResults() {
-    Assert.assertEquals(List.of(), parse(stringParser, "[]"));
-    Assert.assertEquals(List.of(""), parse(stringParser, "[\"\"]"));
-    Assert.assertEquals(List.of("a"), parse(stringParser, "[\"a\"]"));
-    Assert.assertEquals(List.of("hello"), parse(stringParser, "[\"hello\"]"));
-    Assert.assertEquals(List.of("a", "b"), parse(stringParser, "[\"a\", \"b\"]"));
+  public void testParse_Integration_StringArray_RightSyntaxReturnsRightResults() {
+    Assert.assertEquals(List.of(), JsonParser.parse(stringParser, "[]"));
+    Assert.assertEquals(List.of(""), JsonParser.parse(stringParser, "[\"\"]"));
+    Assert.assertEquals(List.of("a"), JsonParser.parse(stringParser, "[\"a\"]"));
+    Assert.assertEquals(List.of("hello"), JsonParser.parse(stringParser, "[\"hello\"]"));
+    Assert.assertEquals(List.of("a", "b"), JsonParser.parse(stringParser, "[\"a\", \"b\"]"));
     Assert.assertEquals(List.of("hello", "world", "!"),
-        parse(stringParser, "[\"hello\", \"world\", \"!\"]"));
+        JsonParser.parse(stringParser, "[\"hello\", \"world\", \"!\"]"));
   }
 
   @Test
-  public void testLargerRandomArraysToBeParsedCorrectly() {
+  public void testParse_Integration_LargerRandomArraysToBeParsedCorrectly() {
     String simpleAlphabet = "abcdefghijklmnopqrstuvwxyz";
     String complexAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.,:;" +
         " \t";
@@ -94,23 +104,21 @@ public class TestJsonArrayParser {
   @Test
   @SuppressWarnings("DataFlowIssue")
   public void testParse_EmptyThrowsError() {
-    Assert.assertThrows(RuntimeException.class, () -> parse(simpleParser, ""));
-    Assert.assertThrows(RuntimeException.class, () -> parse(simpleParser, "\u0000"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(simpleParser, null));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(simpleParser, ""));
+    Assert.assertThrows(RuntimeException.class, () -> JsonParser.parse(simpleParser, "\u0000"));
+    Assert.assertThrows(RuntimeException.class,
+        () -> JsonParser.parse(simpleParser, (String) null));
   }
 
   private void parseRandomArray(JsonArrayParser<String, List<String>> parser,
                                 String charPool, Function<String, String> joinMapper) {
     String[] strings = generateRandomArray(charPool);
     String joint = Arrays.stream(strings).map(joinMapper).collect(Collectors.joining(", "));
-    Assert.assertEquals(List.of(strings), this.parse(parser, '[' + joint + ']'));
-    Assert.assertThrows(JsonParseError.class, () -> this.parse(parser, '[' + joint));
-    Assert.assertThrows(JsonParseError.class, () -> this.parse(parser, joint + ']'));
+    Assert.assertEquals(List.of(strings), JsonParser.parse(parser, '[' + joint + ']'));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, '[' + joint));
+    Assert.assertThrows(JsonParseError.class, () -> JsonParser.parse(parser, joint + ']'));
   }
 
-  private List<String> parse(JsonArrayParser<String, List<String>> parser, CharSequence sequence) {
-    return parser.parse(JsonParseContextFactory.read(sequence));
-  }
 
   private String[] generateRandomArray(String charPool) {
     String[] array = new String[GEN_RANDOM.nextInt(0, 100)];

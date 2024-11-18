@@ -1,7 +1,8 @@
 package io.github.aparx.jsonic.core.parser.tokens;
 
 import io.github.aparx.jsonic.core.parser.ComposableJsonParser;
-import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverser;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 
@@ -18,8 +19,8 @@ public class JsonNullParser implements ComposableJsonParser<Object> {
   public static final JsonNullParser DEFAULT = new JsonNullParser();
 
   @Override
-  public @Nullable Object parse(JsonParseContext context) {
-    context.syntaxReader().expectLiteral(context, "null");
+  public @Nullable Object parse(JsonCharSourceTraverser traverser, JsonSyntaxReader syntaxReader) {
+    syntaxReader.expectLiteral(traverser, "null");
     return null;
   }
 
