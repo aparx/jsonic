@@ -2,6 +2,7 @@ package io.github.aparx.jsonic.core.parser.context.tokens;
 
 import io.github.aparx.jsonic.core.parser.context.JsonParseContextFactory;
 import io.github.aparx.jsonic.core.parser.JsonParserFactory;
+import io.github.aparx.jsonic.core.parser.error.JsonParseError;
 import io.github.aparx.jsonic.core.parser.tokens.JsonArrayParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.com.google.common.base.Preconditions;
@@ -38,13 +39,13 @@ public class TestJsonArrayParser {
 
   @Test
   public void testParse_WrongSyntaxThrowsErrors() {
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "[foo"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "foo]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, " [foo]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "[foo bar]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "[foo bar]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "[foo, bar"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(this.simpleParser, "foo, bar]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "[foo"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "foo]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, " [foo]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "[foo bar]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "[foo bar]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "[foo, bar"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(this.simpleParser, "foo, bar]"));
   }
 
   @Test
@@ -59,13 +60,13 @@ public class TestJsonArrayParser {
 
   @Test
   public void testParseStringArray_WrongSyntaxThrowsError() {
-    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "["));
-    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[\"]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[\"\\\"]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[\"hello]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[world\"]"));
-    Assert.assertThrows(RuntimeException.class, () -> parse(stringParser, "[\\\"world\"]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "["));
+    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[\"]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[\"\\\"]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[\"hello]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[world\"]"));
+    Assert.assertThrows(JsonParseError.class, () -> parse(stringParser, "[\\\"world\"]"));
   }
 
   @Test
@@ -90,14 +91,21 @@ public class TestJsonArrayParser {
     }
   }
 
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  public void testParse_EmptyThrowsError() {
+    Assert.assertThrows(RuntimeException.class, () -> parse(simpleParser, ""));
+    Assert.assertThrows(RuntimeException.class, () -> parse(simpleParser, "\u0000"));
+    Assert.assertThrows(RuntimeException.class, () -> parse(simpleParser, null));
+  }
 
   private void parseRandomArray(JsonArrayParser<String, List<String>> parser,
                                 String charPool, Function<String, String> joinMapper) {
     String[] strings = generateRandomArray(charPool);
     String joint = Arrays.stream(strings).map(joinMapper).collect(Collectors.joining(", "));
     Assert.assertEquals(List.of(strings), this.parse(parser, '[' + joint + ']'));
-    Assert.assertThrows(RuntimeException.class, () -> this.parse(parser, '[' + joint));
-    Assert.assertThrows(RuntimeException.class, () -> this.parse(parser, joint + ']'));
+    Assert.assertThrows(JsonParseError.class, () -> this.parse(parser, '[' + joint));
+    Assert.assertThrows(JsonParseError.class, () -> this.parse(parser, joint + ']'));
   }
 
   private List<String> parse(JsonArrayParser<String, List<String>> parser, CharSequence sequence) {
