@@ -1,10 +1,10 @@
-package io.github.aparx.jsonic.core.parser.context.tokens;
+package io.github.aparx.jsonic.core.parser.tokens;
 
 import io.github.aparx.jsonic.core.JsonSymbol;
 import io.github.aparx.jsonic.core.parser.ComposableJsonParser;
-import io.github.aparx.jsonic.core.parser.ParseErrorFactory;
+import io.github.aparx.jsonic.core.parser.error.ParseErrorFactory;
 import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
-import io.github.aparx.jsonic.core.parser.context.JsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 
@@ -38,7 +38,7 @@ public class JsonStringParser implements ComposableJsonParser<String> {
       builder.append(nextChar);
     } while (context.hasNext());
     if (lastChar == QUOTE_ESCAPE)
-      throw errorHandler.createError(syntaxReader, context, "Last double quote is escaped");
+      throw errorHandler.create(syntaxReader, context, "Last double quote is escaped");
     syntaxReader.expectSymbol(context, JsonSymbol.DOUBLE_QUOTE);
     return builder.toString();
   }

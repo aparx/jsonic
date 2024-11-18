@@ -1,7 +1,7 @@
 package io.github.aparx.jsonic.core.parser;
 
 import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
-import io.github.aparx.jsonic.core.parser.context.JsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.value.qual.IntRange;
@@ -18,8 +18,6 @@ import java.util.function.Function;
  */
 @DefaultQualifier(NonNull.class)
 public interface ComposableJsonParser<T> extends JsonParser<T> {
-
-  String UNEXPECTED_TOKEN = "Unexpected token: %s";
 
   /**
    * Returns true if this parser can <i>potentially</i> be used to parse {@code currentChar} and
@@ -79,8 +77,8 @@ public interface ComposableJsonParser<T> extends JsonParser<T> {
             .findFirst()
             .orElseThrow(() -> {
               JsonSyntaxReader syntaxReader = context.syntaxReader();
-              String message = String.format(UNEXPECTED_TOKEN, context.current());
-              return syntaxReader.errorFactory().createError(syntaxReader, context, message);
+              String message = String.format("Unexpected token: %s", context.current());
+              return syntaxReader.errorFactory().create(syntaxReader, context, message);
             })).parse(context);
       }
     };

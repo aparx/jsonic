@@ -1,7 +1,7 @@
-package io.github.aparx.jsonic.core.parser;
+package io.github.aparx.jsonic.core.parser.error;
 
 import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
-import io.github.aparx.jsonic.core.parser.context.JsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 
@@ -14,7 +14,6 @@ import org.checkerframework.framework.qual.DefaultQualifier;
 @DefaultQualifier(NonNull.class)
 public interface ParseErrorFactory {
 
-  RuntimeException createError(JsonSyntaxReader syntaxReader, JsonParseContext context,
-                               String message);
+  JsonParseError create(JsonSyntaxReader syntaxReader, JsonParseContext context, String message);
 
 }

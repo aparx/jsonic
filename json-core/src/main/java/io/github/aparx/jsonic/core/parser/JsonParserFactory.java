@@ -1,7 +1,6 @@
-package io.github.aparx.jsonic.core.parser.context;
+package io.github.aparx.jsonic.core.parser;
 
-import io.github.aparx.jsonic.core.parser.JsonParser;
-import io.github.aparx.jsonic.core.parser.context.tokens.*;
+import io.github.aparx.jsonic.core.parser.tokens.*;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.com.google.errorprone.annotations.CheckReturnValue;
@@ -68,30 +67,30 @@ public final class JsonParserFactory {
     return array(JsonBooleanParser.DEFAULT);
   }
 
-  // <====================> RECORD <====================>
+  // <====================> OBJECT <====================>
 
   @CheckReturnValue
-  public static <K, V> JsonRecordParser<K, V> record(
+  public static <K, V> JsonObjectParser<K, V> object(
       Supplier<Map<K, V>> mapFactory,
       JsonParser<? extends K> keyParser,
       JsonParser<? extends V> valueParser) {
-    return new JsonRecordParser<>(mapFactory, keyParser, valueParser);
+    return new JsonObjectParser<>(mapFactory, keyParser, valueParser);
   }
 
   @CheckReturnValue
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public static <@Nullable K, @Nullable V> JsonRecordParser<K, V> record(
+  public static <@Nullable K, @Nullable V> JsonObjectParser<K, V> object(
       JsonParser<@Nullable ? extends K> keyParser,
       JsonParser<@Nullable ? extends V> valueParser) {
-    return new JsonRecordParser<>((Supplier) RECORD_UNORDERED_MAP, keyParser, valueParser);
+    return new JsonObjectParser<>((Supplier) RECORD_UNORDERED_MAP, keyParser, valueParser);
   }
 
   @CheckReturnValue
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public static <@Nullable K, @Nullable V> JsonRecordParser<K, V> orderedRecord(
+  public static <@Nullable K, @Nullable V> JsonObjectParser<K, V> orderedObject(
       JsonParser<@Nullable ? extends K> keyParser,
       JsonParser<@Nullable ? extends V> valueParser) {
-    return new JsonRecordParser<>((Supplier) RECORD_ORDERED_MAP, keyParser, valueParser);
+    return new JsonObjectParser<>((Supplier) RECORD_ORDERED_MAP, keyParser, valueParser);
   }
 
 }

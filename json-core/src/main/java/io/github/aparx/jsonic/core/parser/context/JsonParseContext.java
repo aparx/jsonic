@@ -2,6 +2,7 @@ package io.github.aparx.jsonic.core.parser.context;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import io.github.aparx.jsonic.core.JsonSymbol;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.com.google.common.base.Preconditions;
 import org.checkerframework.common.value.qual.IntRange;

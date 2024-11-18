@@ -1,4 +1,4 @@
-package io.github.aparx.jsonic.core.parser.context.tokens;
+package io.github.aparx.jsonic.core.parser.tokens;
 
 import io.github.aparx.jsonic.core.parser.ComposableJsonParser;
 import io.github.aparx.jsonic.core.parser.context.JsonParseContext;

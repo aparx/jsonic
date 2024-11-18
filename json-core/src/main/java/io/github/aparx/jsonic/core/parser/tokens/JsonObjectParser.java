@@ -1,11 +1,11 @@
-package io.github.aparx.jsonic.core.parser.context.tokens;
+package io.github.aparx.jsonic.core.parser.tokens;
 
 import io.github.aparx.jsonic.core.JsonSymbol;
 import io.github.aparx.jsonic.core.parser.ComposableJsonParser;
 import io.github.aparx.jsonic.core.parser.JsonParser;
-import io.github.aparx.jsonic.core.parser.ParseErrorFactory;
+import io.github.aparx.jsonic.core.parser.error.ParseErrorFactory;
 import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
-import io.github.aparx.jsonic.core.parser.context.JsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.com.google.common.base.Preconditions;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  * @since 1.0
  */
 @DefaultQualifier(NonNull.class)
-public class JsonRecordParser<K, V> implements ComposableJsonParser<Map<@Nullable K, @Nullable V>> {
+public class JsonObjectParser<K, V> implements ComposableJsonParser<Map<@Nullable K, @Nullable V>> {
 
   private static final String DUPLICATE_KEY_ERROR = "Key %s is a duplicate";
 
@@ -32,7 +32,7 @@ public class JsonRecordParser<K, V> implements ComposableJsonParser<Map<@Nullabl
   /** Allows no duplicate keys */
   private boolean strict;
 
-  public JsonRecordParser(Supplier<Map<K, V>> mapFactory,
+  public JsonObjectParser(Supplier<Map<K, V>> mapFactory,
                           JsonParser<? extends K> keyParser,
                           JsonParser<? extends V> valueParser) {
     Preconditions.checkNotNull(mapFactory, "Map factory must not be null");
@@ -59,7 +59,7 @@ public class JsonRecordParser<K, V> implements ComposableJsonParser<Map<@Nullabl
       }
       @Nullable K key = this.keyParser.parse(context);
       if (this.strict && map.containsKey(key))
-        throw errorHandler.createError(syntaxReader, context,
+        throw errorHandler.create(syntaxReader, context,
             String.format(DUPLICATE_KEY_ERROR, key));
       syntaxReader.readAndSkip(context, Character::isWhitespace);
       syntaxReader.expectSymbol(context, JsonSymbol.COLON);
@@ -77,7 +77,7 @@ public class JsonRecordParser<K, V> implements ComposableJsonParser<Map<@Nullabl
   }
 
   @CanIgnoreReturnValue
-  public JsonRecordParser<K, V> setStrict(boolean strict) {
+  public JsonObjectParser<K, V> setStrict(boolean strict) {
     this.strict = strict;
     return this;
   }

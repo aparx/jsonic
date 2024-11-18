@@ -1,10 +1,14 @@
-package io.github.aparx.jsonic.core.parser.context;
+package io.github.aparx.jsonic.core.parser.syntax;
 
 import io.github.aparx.jsonic.core.JsonSymbol;
-import io.github.aparx.jsonic.core.parser.ParseErrorFactory;
+import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
+import io.github.aparx.jsonic.core.parser.error.JsonParseError;
+import io.github.aparx.jsonic.core.parser.error.ParseErrorFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.checkerframework.org.apache.commons.text.CharacterPredicate;
+
+import java.util.NoSuchElementException;
 
 /**
  * @author aparx (Vinzent Z.)
@@ -37,6 +41,7 @@ public interface JsonSyntaxReader {
    * @param context       the context, supplying the characters
    * @param skipPredicate character predicate that causes this method to continuously read the next
    *                      character in {@code context}, until it returns false
+   * @throws NoSuchElementException if {@code context} has no characters left
    */
   void readAndSkip(JsonParseContext context, CharacterPredicate skipPredicate);
 
@@ -47,6 +52,9 @@ public interface JsonSyntaxReader {
    *
    * @param context the context supplying the characters to expect the symbol
    * @param symbol  the symbol to be expected, whose literal value defines the expected literal(s)
+   * @throws JsonParseError         if the current character in {@code context} does
+   *                                not match the literal version of {@code symbol}
+   * @throws NoSuchElementException if {@code context} has no characters left
    */
   void expectSymbol(JsonParseContext context, JsonSymbol symbol);
 
@@ -60,6 +68,12 @@ public interface JsonSyntaxReader {
    *
    * @param context the context supplying the characters to expect the literal string
    * @param literal the literal to be expected
+   * @throws JsonParseError         if a character from {@code context}, does not match an expected
+   *                                character from {@code literal} (see specification)
+   * @throws NoSuchElementException if {@code context} has no characters left
+   * @apiNote More specifically, an error is thrown, if a character in {@code context} at index
+   * {@code i}, where {@code i=0} is the current character, does not match a character in {@code
+   * literal} at index {@code i} (or thus lengths mismatch).
    */
   void expectLiteral(JsonParseContext context, String literal);
 
@@ -69,6 +83,9 @@ public interface JsonSyntaxReader {
    *
    * @param context the context whose current character is used to compare against literal
    * @param literal the literal to be expected
+   * @throws JsonParseError         if the current character in {@code context} is not equal
+   *                                the given {@code literal} character
+   * @throws NoSuchElementException if {@code context} has no characters left
    */
   void expectLiteral(JsonParseContext context, char literal);
 

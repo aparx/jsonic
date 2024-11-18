@@ -1,5 +1,9 @@
 package io.github.aparx.jsonic.core.parser.context;
 
+import io.github.aparx.jsonic.core.parser.syntax.DefaultJsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.error.JsonParseError;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -12,7 +16,7 @@ import java.io.InputStream;
 public final class JsonParseContextFactory {
 
   private static final JsonSyntaxReader DEFAULT_SYNTAX_READER =
-      new DefaultSyntaxReader((__, ctx, msg) -> new IllegalStateException(
+      new DefaultJsonSyntaxReader((reader, ctx, msg) -> new JsonParseError(
           String.format("Error at %s:%s -> %s", 1 + ctx.lineIndex(), ctx.charPosInLine(), msg)));
 
   private JsonParseContextFactory() {

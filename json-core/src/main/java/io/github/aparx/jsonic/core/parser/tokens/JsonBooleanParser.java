@@ -1,8 +1,8 @@
-package io.github.aparx.jsonic.core.parser.context.tokens;
+package io.github.aparx.jsonic.core.parser.tokens;
 
 import io.github.aparx.jsonic.core.parser.ComposableJsonParser;
 import io.github.aparx.jsonic.core.parser.context.JsonParseContext;
-import io.github.aparx.jsonic.core.parser.context.JsonSyntaxReader;
+import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.qual.DefaultQualifier;
 
@@ -30,7 +30,7 @@ public class JsonBooleanParser implements ComposableJsonParser<Boolean> {
         syntaxReader.expectLiteral(context, "false");
         return false;
     }
-    throw syntaxReader.errorFactory().createError(syntaxReader, context,
+    throw syntaxReader.errorFactory().create(syntaxReader, context,
         String.format(ERROR_UNEXPECTED_TOKEN, context.current()));
   }
 
