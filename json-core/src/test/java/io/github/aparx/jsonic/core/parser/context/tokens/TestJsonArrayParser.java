@@ -1,9 +1,9 @@
 package io.github.aparx.jsonic.core.parser.context.tokens;
 
+import io.github.aparx.jsonic.core.parser.JsonParser;
 import io.github.aparx.jsonic.core.parser.context.JsonParseContextFactory;
 import io.github.aparx.jsonic.core.parser.context.JsonParserFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,10 +21,9 @@ public class TestJsonArrayParser {
   private final JsonArrayParser<String, List<String>> parser = JsonParserFactory.array((ctx) -> {
     // Elements of this parser must match `[a-z]*`
     StringBuilder builder = new StringBuilder();
-    for (int ch = ctx.current(); ctx.hasNext(); ch = ctx.peek()) {
-      if (ch < 'a' || ch > 'z') break;
+    for (char ch = ctx.current(); ch >= 'a' && ch <= 'z'; ch = ctx.next()) {
       builder.append(ch);
-      ctx.next();
+      if (!ctx.hasNext()) break;
     }
     return builder.toString();
   });
@@ -37,15 +36,18 @@ public class TestJsonArrayParser {
     Assert.assertThrows(RuntimeException.class, () -> parse("[foo bar]"));
     Assert.assertThrows(RuntimeException.class, () -> parse("[foo bar]"));
     Assert.assertThrows(RuntimeException.class, () -> parse("[foo, bar"));
-    Assert.assertThrows(RuntimeException.class, () -> parse("[foo, bar,]"));
     Assert.assertThrows(RuntimeException.class, () -> parse("foo, bar]"));
+    Assert.assertThrows(RuntimeException.class, () -> parse("[A]"));
+    Assert.assertEquals(List.of(), parse("[]"));
+    Assert.assertEquals(List.of("a"), parse("[a]"));
     Assert.assertEquals(List.of("foo"), parse("[foo]"));
     Assert.assertEquals(List.of("foo", "bar"), parse("[foo, bar]"));
+    Assert.assertEquals(List.of("foo", "bar", ""), parse("[foo, bar,]"));
     Assert.assertEquals(List.of("foo", "bar", "baz"), parse("[foo, bar, baz]"));
   }
 
   private List<String> parse(CharSequence sequence) {
-    return parser.parse(JsonParseContextFactory.read(sequence));
+    return parser.parse(JsonParseContextFactory.of(sequence));
   }
 
 

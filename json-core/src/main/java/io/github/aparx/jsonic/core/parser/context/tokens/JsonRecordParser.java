@@ -50,23 +50,23 @@ public class JsonRecordParser<K, V> implements ComposableJsonParser<Map<@Nullabl
     ParseErrorFactory errorHandler = syntaxReader.errorHandler();
     syntaxReader.expectSymbol(context, JsonSymbol.CURLY_OPEN);
     while (context.hasNext()) {
-      syntaxReader.readNextAndSkip(context, Character::isWhitespace);
+      syntaxReader.readAndSkip(context, Character::isWhitespace);
       if (JsonSymbol.CURLY_CLOSE.matches(context.current())) break;
       if (!map.isEmpty()) {
         // Handle separation of multiple KV-pairs
         syntaxReader.expectSymbol(context, JsonSymbol.COMMA);
-        syntaxReader.readNextAndSkip(context, Character::isWhitespace);
+        syntaxReader.readAndSkip(context, Character::isWhitespace);
       }
       @Nullable K key = this.keyParser.parse(context);
       if (this.strict && map.containsKey(key))
         throw errorHandler.createError(syntaxReader, context,
             String.format(DUPLICATE_KEY_ERROR, key));
-      syntaxReader.readNextAndSkip(context, Character::isWhitespace);
+      syntaxReader.readAndSkip(context, Character::isWhitespace);
       syntaxReader.expectSymbol(context, JsonSymbol.COLON);
-      syntaxReader.readNextAndSkip(context, Character::isWhitespace);
+      syntaxReader.readAndSkip(context, Character::isWhitespace);
       map.put(key, this.valueParser.parse(context));
     }
-    syntaxReader.readNextAndSkip(context, Character::isWhitespace);
+    syntaxReader.readAndSkip(context, Character::isWhitespace);
     syntaxReader.expectSymbol(context, JsonSymbol.CURLY_CLOSE);
     return map;
   }
@@ -77,7 +77,7 @@ public class JsonRecordParser<K, V> implements ComposableJsonParser<Map<@Nullabl
   }
 
   @CanIgnoreReturnValue
-  public JsonRecordParser<K, V> withStrict(boolean strict) {
+  public JsonRecordParser<K, V> setStrict(boolean strict) {
     this.strict = strict;
     return this;
   }

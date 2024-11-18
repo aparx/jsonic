@@ -3,7 +3,6 @@ package io.github.aparx.jsonic.core.parser.context;
 import io.github.aparx.jsonic.core.JsonSymbol;
 import io.github.aparx.jsonic.core.parser.ParseErrorFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.checkerframework.framework.qual.DefaultQualifier;
 import org.checkerframework.org.apache.commons.text.CharacterPredicate;
 
@@ -17,9 +16,14 @@ public interface JsonSyntaxReader {
 
   ParseErrorFactory errorHandler();
 
-  @CanIgnoreReturnValue
-  char readNextAndSkip(JsonParseContext context, CharacterPredicate skipPredicate);
+  void readAndSkip(JsonParseContext context, CharacterPredicate skipPredicate);
 
+  /**
+   * Expects a symbol at current character from {@code context}
+   *
+   * @param context
+   * @param symbol
+   */
   void expectSymbol(JsonParseContext context, JsonSymbol symbol);
 
   void expectLiteral(JsonParseContext context, String literal);

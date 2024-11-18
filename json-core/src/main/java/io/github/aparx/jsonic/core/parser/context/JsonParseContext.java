@@ -44,9 +44,7 @@ public class JsonParseContext implements JsonCharSource {
 
   @Override
   public boolean hasNext() {
-    if (this.currentChar != this.peekedChar && this.hasPeeked)
-      return true;
-    return this.source.hasNext();
+    return this.hasPeeked || this.source.hasNext();
   }
 
   @Override
