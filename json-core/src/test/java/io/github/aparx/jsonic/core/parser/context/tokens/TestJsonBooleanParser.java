@@ -29,6 +29,7 @@ public class TestJsonBooleanParser {
     Assert.assertThrows(JsonParseError.class, () -> parse(" true"));
     Assert.assertThrows(JsonParseError.class, () -> parse("\ttrue"));
     Assert.assertThrows(JsonParseError.class, () -> parse("\r\ntrue"));
+    Assert.assertThrows(JsonParseError.class, () -> parse("\u0000true"));
 
     Assert.assertThrows(JsonParseError.class, () -> parse("FALSE"));
     Assert.assertThrows(JsonParseError.class, () -> parse("fAlse"));
@@ -39,12 +40,21 @@ public class TestJsonBooleanParser {
     Assert.assertThrows(JsonParseError.class, () -> parse(" false"));
     Assert.assertThrows(JsonParseError.class, () -> parse("\tfalse"));
     Assert.assertThrows(JsonParseError.class, () -> parse("\r\nfalse"));
+    Assert.assertThrows(JsonParseError.class, () -> parse("\u0000false"));
   }
 
   @Test
   public void testParse_RightSyntaxReturnsRightResults() {
     Assert.assertEquals(true, parse("true"));
     Assert.assertEquals(false, parse("false"));
+  }
+
+  @Test
+  public void testParse_EnsureEarlyReturn() {
+    Assert.assertEquals(false, parse("false\t"));
+    Assert.assertEquals(true, parse("true\t"));
+    Assert.assertEquals(true, parse("trueSOME_OTHER_THINGS"));
+    Assert.assertEquals(false, parse("falseSOME_OTHER_THINGS"));
   }
 
   @Test
