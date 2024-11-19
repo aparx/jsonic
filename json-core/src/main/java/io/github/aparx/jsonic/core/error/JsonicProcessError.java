@@ -1,5 +1,6 @@
 package io.github.aparx.jsonic.core.error;
 
+import io.github.aparx.jsonic.core.context.JsonProcessContext;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.framework.qual.DefaultQualifier;
@@ -18,6 +19,10 @@ public class JsonicProcessError extends RuntimeException {
     super(message);
   }
 
+  public JsonicProcessError(@Nullable String message, JsonProcessContext context) {
+    super(JsonicErrorMessageFactory.create(message, context));
+  }
+
   public JsonicProcessError(@Nullable String message, @Nullable Throwable cause) {
     super(message, cause);
   }
@@ -31,4 +36,5 @@ public class JsonicProcessError extends RuntimeException {
                             boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }
+
 }

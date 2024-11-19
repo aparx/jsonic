@@ -9,9 +9,7 @@ import org.checkerframework.framework.qual.DefaultQualifier;
  * @since 1.0
  */
 @DefaultQualifier(NonNull.class)
-public class DefaultJsonProcessContext implements JsonProcessContext {
-
-  public static DefaultJsonProcessContext DEFAULT = new DefaultJsonProcessContext();
+public class JsonProcessSimpleContext implements JsonProcessContext {
 
   protected int lineIndex;
   protected int charPosInLine;

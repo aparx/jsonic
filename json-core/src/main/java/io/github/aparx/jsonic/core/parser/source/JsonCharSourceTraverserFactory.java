@@ -1,6 +1,6 @@
 package io.github.aparx.jsonic.core.parser.source;
 
-import io.github.aparx.jsonic.core.context.DefaultJsonProcessContext;
+import io.github.aparx.jsonic.core.context.JsonProcessHistoryContext;
 import io.github.aparx.jsonic.core.context.JsonProcessContext;
 
 import java.io.File;
@@ -37,19 +37,19 @@ public final class JsonCharSourceTraverserFactory {
   }
 
   public static JsonCharSourceTraverser read(JsonCharSource source) {
-    return read(source, DefaultJsonProcessContext.DEFAULT);
+    return read(source, new JsonProcessHistoryContext());
   }
 
   public static JsonCharSourceTraverser read(CharSequence source) {
-    return read(JsonCharSourceFactory.from(source), DefaultJsonProcessContext.DEFAULT);
+    return read(JsonCharSourceFactory.from(source), new JsonProcessHistoryContext());
   }
 
   public static JsonCharSourceTraverser read(InputStream source) {
-    return read(JsonCharSourceFactory.from(source), DefaultJsonProcessContext.DEFAULT);
+    return read(JsonCharSourceFactory.from(source), new JsonProcessHistoryContext());
   }
 
   public static JsonCharSourceTraverser read(File source) throws FileNotFoundException {
-    return read(JsonCharSourceFactory.from(source), DefaultJsonProcessContext.DEFAULT);
+    return read(JsonCharSourceFactory.from(source), new JsonProcessHistoryContext());
   }
 
 }

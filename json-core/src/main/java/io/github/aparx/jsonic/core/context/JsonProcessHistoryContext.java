@@ -15,7 +15,7 @@ import org.checkerframework.com.google.common.base.Preconditions;
  * @version 2024-11-19 00:32
  * @since 1.0
  */
-public class JsonProcessHistoryContext extends DefaultJsonProcessContext {
+public class JsonProcessHistoryContext extends JsonProcessSimpleContext {
 
   public static final int DEFAULT_BUFFER_SIZE = 32;
 
