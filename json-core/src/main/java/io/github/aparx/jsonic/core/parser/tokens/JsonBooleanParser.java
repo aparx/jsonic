@@ -28,9 +28,10 @@ public class JsonBooleanParser implements ComposableJsonParser<Boolean> {
       case 'f':
         syntaxReader.expectLiteral(traverser, "false");
         return false;
+      default:
+        throw syntaxReader.errorFactory().create(syntaxReader, traverser,
+            String.format(ERROR_UNEXPECTED_TOKEN, traverser.current()));
     }
-    throw syntaxReader.errorFactory().create(syntaxReader, traverser,
-        String.format(ERROR_UNEXPECTED_TOKEN, traverser.current()));
   }
 
   @Override

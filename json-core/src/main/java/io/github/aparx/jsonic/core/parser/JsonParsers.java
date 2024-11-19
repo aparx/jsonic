@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * @since 1.0
  */
 @DefaultQualifier(NonNull.class)
-public final class JsonParserFactory {
+public final class JsonParsers {
 
   private static final Supplier<Map<?, ?>> RECORD_UNORDERED_MAP = HashMap::new;
   private static final Supplier<Map<?, ?>> RECORD_ORDERED_MAP = LinkedHashMap::new;
@@ -23,7 +23,7 @@ public final class JsonParserFactory {
   private static final Supplier<List<?>> ARRAY_DEFAULT_LIST = ArrayList::new;
   private static final Supplier<Set<?>> ARRAY_SET_LIST = HashSet::new;
 
-  private JsonParserFactory() {
+  private JsonParsers() {
     throw new AssertionError();
   }
 
@@ -92,5 +92,6 @@ public final class JsonParserFactory {
       JsonParser<@Nullable ? extends V> valueParser) {
     return new JsonObjectParser<>((Supplier) RECORD_ORDERED_MAP, keyParser, valueParser);
   }
+
 
 }

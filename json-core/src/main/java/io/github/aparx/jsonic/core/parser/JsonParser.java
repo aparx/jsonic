@@ -2,7 +2,7 @@ package io.github.aparx.jsonic.core.parser;
 
 import io.github.aparx.jsonic.core.parser.error.JsonParseError;
 import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverser;
-import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverserFactory;
+import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraversers;
 import io.github.aparx.jsonic.core.parser.syntax.DefaultJsonSyntaxReader;
 import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -63,33 +63,33 @@ public interface JsonParser<T> {
   }
 
   static <@Nullable T> @Nullable T parse(JsonParser<T> parser, CharSequence sequence) {
-    return parse(parser, JsonCharSourceTraverserFactory.read(sequence));
+    return parse(parser, JsonCharSourceTraversers.read(sequence));
   }
 
   static <@Nullable T> @Nullable T parse(
       JsonParser<T> parser, CharSequence sequence, JsonSyntaxReader syntaxReader) {
-    return parse(parser, JsonCharSourceTraverserFactory.read(sequence), syntaxReader);
+    return parse(parser, JsonCharSourceTraversers.read(sequence), syntaxReader);
   }
 
   static <@Nullable T> @Nullable T parse(JsonParser<T> parser, InputStream inputStream) {
-    return parse(parser, JsonCharSourceTraverserFactory.read(inputStream));
+    return parse(parser, JsonCharSourceTraversers.read(inputStream));
   }
 
   static <@Nullable T> @Nullable T parse(
       JsonParser<T> parser, InputStream inputStream, JsonSyntaxReader syntaxReader) {
-    return parse(parser, JsonCharSourceTraverserFactory.read(inputStream), syntaxReader);
+    return parse(parser, JsonCharSourceTraversers.read(inputStream), syntaxReader);
   }
 
   static <@Nullable T> @Nullable T parse(
       JsonParser<T> parser, File file
   ) throws FileNotFoundException {
-    return parse(parser, JsonCharSourceTraverserFactory.read(file));
+    return parse(parser, JsonCharSourceTraversers.read(file));
   }
 
   static <@Nullable T> @Nullable T parse(
       JsonParser<T> parser, File file, JsonSyntaxReader syntaxReader
   ) throws FileNotFoundException {
-    return parse(parser, JsonCharSourceTraverserFactory.read(file), syntaxReader);
+    return parse(parser, JsonCharSourceTraversers.read(file), syntaxReader);
   }
 
 }

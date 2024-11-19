@@ -23,7 +23,11 @@ public final class JsonicErrorMessageFactory {
     throw new AssertionError();
   }
 
-  public static String create(@Nullable String details, JsonProcessContext context) {
+  public static String create(JsonProcessContext context) {
+    return create(context, null);
+  }
+
+  public static String create(JsonProcessContext context, @Nullable String details) {
     StringBuilder builder = new StringBuilder("Error at line ");
     builder.append(1 + context.getLineIndex()).append(':')
         .append(context.getPositionInLine())

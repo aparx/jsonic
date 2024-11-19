@@ -1,7 +1,7 @@
 package io.github.aparx.jsonic.core.parser.context.tokens;
 
 import io.github.aparx.jsonic.core.parser.JsonParser;
-import io.github.aparx.jsonic.core.parser.JsonParserFactory;
+import io.github.aparx.jsonic.core.parser.JsonParsers;
 import io.github.aparx.jsonic.core.parser.error.JsonParseError;
 import io.github.aparx.jsonic.core.parser.tokens.JsonArrayParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -27,10 +27,10 @@ public class TestJsonArrayParser {
   private static final Random GEN_RANDOM = new Random(38656245L);
 
   private final JsonArrayParser<String, List<String>> stringParser =
-      JsonParserFactory.stringArray();
+      JsonParsers.stringArray();
 
   private final JsonArrayParser<String, List<String>> simpleParser =
-      JsonParserFactory.array((ctx, syntaxReader) -> {
+      JsonParsers.array((ctx, syntaxReader) -> {
         // The elements of this array should only be considered valid when: ['z'>=x>='a']
         // Optionally, one can ensure that the returning string is not empty, to disallow invalid
         // syntax, which would result in parse("[A]") throwing the error thrown in here.

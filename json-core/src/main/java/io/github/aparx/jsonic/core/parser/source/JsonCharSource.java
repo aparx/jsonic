@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
  * @author aparx (Vinzent Z.)
  * @version 2024-11-15 14:26
  * @see Iterator
- * @see JsonCharSourceFactory
+ * @see JsonCharSources
  * @since 1.0
  */
 @DefaultQualifier(NonNull.class)

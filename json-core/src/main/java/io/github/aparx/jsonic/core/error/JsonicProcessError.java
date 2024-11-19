@@ -20,7 +20,7 @@ public class JsonicProcessError extends RuntimeException {
   }
 
   public JsonicProcessError(@Nullable String message, JsonProcessContext context) {
-    super(JsonicErrorMessageFactory.create(message, context));
+    super(JsonicErrorMessageFactory.create(context, message));
   }
 
   public JsonicProcessError(@Nullable String message, @Nullable Throwable cause) {

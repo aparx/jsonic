@@ -15,14 +15,14 @@ import java.util.NoSuchElementException;
  * @since 1.0
  */
 @DefaultQualifier(NonNull.class)
-public final class JsonCharSourceFactory {
+public final class JsonCharSources {
 
-  private JsonCharSourceFactory() {
+  private JsonCharSources() {
     throw new AssertionError();
   }
 
   @CheckReturnValue
-  public static JsonCharSource from(CharSequence sequence, int offset, int length) {
+  public static JsonCharSource of(CharSequence sequence, int offset, int length) {
     Preconditions.checkArgument(!sequence.isEmpty(), "Sequence must not be empty");
     Preconditions.checkPositionIndex(length, sequence.length());
     Preconditions.checkElementIndex(offset, length);
@@ -30,25 +30,25 @@ public final class JsonCharSourceFactory {
   }
 
   @CheckReturnValue
-  public static JsonCharSource from(CharSequence sequence, int offset) {
+  public static JsonCharSource of(CharSequence sequence, int offset) {
     Preconditions.checkArgument(!sequence.isEmpty(), "Sequence must not be empty");
     Preconditions.checkElementIndex(offset, sequence.length());
     return new SequenceSource(sequence, offset, sequence.length());
   }
 
   @CheckReturnValue
-  public static JsonCharSource from(CharSequence sequence) {
+  public static JsonCharSource of(CharSequence sequence) {
     Preconditions.checkArgument(!sequence.isEmpty(), "Sequence must not be empty");
     return new SequenceSource(sequence, 0, sequence.length());
   }
 
   @CheckReturnValue
-  public static JsonCharSource from(InputStream inputStream) {
+  public static JsonCharSource of(InputStream inputStream) {
     return new InputStreamSource(inputStream);
   }
 
   @CheckReturnValue
-  public static JsonCharSource from(File file) throws FileNotFoundException {
+  public static JsonCharSource of(File file) throws FileNotFoundException {
     return new InputStreamSource(new FileInputStream(file));
   }
 

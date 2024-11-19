@@ -12,9 +12,9 @@ import java.io.InputStream;
  * @version 2024-11-15 15:23
  * @since 1.0
  */
-public final class JsonCharSourceTraverserFactory {
+public final class JsonCharSourceTraversers {
 
-  private JsonCharSourceTraverserFactory() {
+  private JsonCharSourceTraversers() {
     throw new AssertionError();
   }
 
@@ -25,15 +25,15 @@ public final class JsonCharSourceTraverserFactory {
   }
 
   public static JsonCharSourceTraverser read(CharSequence source, JsonProcessContext context) {
-    return read(JsonCharSourceFactory.from(source), context);
+    return read(JsonCharSources.of(source), context);
   }
 
   public static JsonCharSourceTraverser read(InputStream source, JsonProcessContext context) {
-    return read(JsonCharSourceFactory.from(source), context);
+    return read(JsonCharSources.of(source), context);
   }
 
   public static JsonCharSourceTraverser read(File source, JsonProcessContext context) throws FileNotFoundException {
-    return read(JsonCharSourceFactory.from(source), context);
+    return read(JsonCharSources.of(source), context);
   }
 
   public static JsonCharSourceTraverser read(JsonCharSource source) {
@@ -41,15 +41,15 @@ public final class JsonCharSourceTraverserFactory {
   }
 
   public static JsonCharSourceTraverser read(CharSequence source) {
-    return read(JsonCharSourceFactory.from(source), new JsonProcessHistoryContext());
+    return read(JsonCharSources.of(source), new JsonProcessHistoryContext());
   }
 
   public static JsonCharSourceTraverser read(InputStream source) {
-    return read(JsonCharSourceFactory.from(source), new JsonProcessHistoryContext());
+    return read(JsonCharSources.of(source), new JsonProcessHistoryContext());
   }
 
   public static JsonCharSourceTraverser read(File source) throws FileNotFoundException {
-    return read(JsonCharSourceFactory.from(source), new JsonProcessHistoryContext());
+    return read(JsonCharSources.of(source), new JsonProcessHistoryContext());
   }
 
 }
