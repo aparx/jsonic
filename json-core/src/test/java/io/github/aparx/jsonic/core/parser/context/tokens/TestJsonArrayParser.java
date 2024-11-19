@@ -1,10 +1,8 @@
 package io.github.aparx.jsonic.core.parser.context.tokens;
 
 import io.github.aparx.jsonic.core.parser.JsonParser;
-import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverserFactory;
 import io.github.aparx.jsonic.core.parser.JsonParserFactory;
 import io.github.aparx.jsonic.core.parser.error.JsonParseError;
-import io.github.aparx.jsonic.core.parser.syntax.DefaultJsonSyntaxReader;
 import io.github.aparx.jsonic.core.parser.tokens.JsonArrayParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.com.google.common.base.Preconditions;
@@ -14,7 +12,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;

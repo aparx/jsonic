@@ -18,7 +18,4 @@ public interface ParseErrorFactory {
                         JsonCharSourceTraverser traverser,
                         String message);
 
-  // TODO
-  //  check if traverser's context is typeof HistoryAwareParseContext, if so can provide stacktrace
-
 }

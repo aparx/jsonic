@@ -21,11 +21,11 @@ public final class DefaultJsonCharSourceTraverser implements JsonCharSourceTrave
   private final JsonCharSource source;
   private final JsonProcessContext context;
 
-  @IntRange(from = JsonCharSourceTraverser.NULL_CHARACTER, to = Character.MAX_VALUE)
-  private int peekedChar = JsonCharSourceTraverser.NULL_CHARACTER;
+  @IntRange(from = NULL_CHARACTER, to = Character.MAX_VALUE)
+  private int peekedChar = NULL_CHARACTER;
 
-  @IntRange(from = JsonCharSourceTraverser.NULL_CHARACTER, to = Character.MAX_VALUE)
-  private int currentChar = JsonCharSourceTraverser.NULL_CHARACTER;
+  @IntRange(from = NULL_CHARACTER, to = Character.MAX_VALUE)
+  private int currentChar = NULL_CHARACTER;
 
   private boolean hasPeeked;
 
@@ -46,35 +46,35 @@ public final class DefaultJsonCharSourceTraverser implements JsonCharSourceTrave
     // In order to check if we have a new line, we need to ensure
     // that we have a current and next value (to check against "\n" or "\r\n").
     int peekedChar = this.peek();
-    if (peekedChar == JsonCharSourceTraverser.NULL_CHARACTER)
+    if (peekedChar == NULL_CHARACTER)
       // This block should never be reached, and if: the underlying source is wrong
       throw new NoSuchElementException("Source is exhausted");
     int lastChar = this.currentChar;
     this.currentChar = peekedChar;
     this.hasPeeked = false;
-    this.context.enterNewline();
+    this.context.append((char) this.currentChar);
     if (this.currentChar == '\n' && (!SystemUtils.IS_OS_LINUX || lastChar == '\r'))
-      this.context.push((char) this.currentChar);
+      this.context.newline();
     return (char) this.currentChar;
   }
 
   @Override
   public boolean hasRead() {
-    return this.currentChar != JsonCharSourceTraverser.NULL_CHARACTER;
+    return this.currentChar != NULL_CHARACTER;
   }
 
   @CanIgnoreReturnValue
-  @IntRange(from = JsonCharSourceTraverser.NULL_CHARACTER, to = Character.MAX_VALUE)
+  @IntRange(from = NULL_CHARACTER, to = Character.MAX_VALUE)
   public int peek() {
     if (hasPeeked) return this.peekedChar;
     if (!this.source.hasNext())
-      return JsonCharSourceTraverser.NULL_CHARACTER;
+      return NULL_CHARACTER;
     this.hasPeeked = true;
     return (this.peekedChar = this.source.next());
   }
 
   public char current() {
-    if (this.currentChar == JsonCharSourceTraverser.NULL_CHARACTER)
+    if (this.currentChar == NULL_CHARACTER)
       throw new NoSuchElementException("Context has not been read yet");
     return (char) this.currentChar;
   }

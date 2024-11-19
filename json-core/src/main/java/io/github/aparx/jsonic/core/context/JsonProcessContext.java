@@ -9,9 +9,9 @@ import org.checkerframework.checker.index.qual.NonNegative;
  */
 public interface JsonProcessContext {
 
-  void enterNewline();
+  void newline();
 
-  void push(char ch);
+  void append(char ch);
 
   @NonNegative
   int getLineIndex();

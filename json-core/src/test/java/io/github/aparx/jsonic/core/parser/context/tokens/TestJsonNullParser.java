@@ -1,10 +1,7 @@
 package io.github.aparx.jsonic.core.parser.context.tokens;
 
 import io.github.aparx.jsonic.core.parser.JsonParser;
-import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverserFactory;
 import io.github.aparx.jsonic.core.parser.error.JsonParseError;
-import io.github.aparx.jsonic.core.parser.syntax.DefaultJsonSyntaxReader;
-import io.github.aparx.jsonic.core.parser.syntax.JsonSyntaxReader;
 import io.github.aparx.jsonic.core.parser.tokens.JsonNullParser;
 import org.junit.Assert;
 import org.junit.Test;
