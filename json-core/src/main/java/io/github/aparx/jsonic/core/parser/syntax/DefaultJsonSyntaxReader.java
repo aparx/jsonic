@@ -1,7 +1,6 @@
 package io.github.aparx.jsonic.core.parser.syntax;
 
 import io.github.aparx.jsonic.core.JsonSymbol;
-import io.github.aparx.jsonic.core.parser.error.JsonParseError;
 import io.github.aparx.jsonic.core.parser.error.ParseErrorFactory;
 import io.github.aparx.jsonic.core.parser.source.JsonCharSourceTraverser;
 import org.checkerframework.checker.nullness.qual.NonNull;
