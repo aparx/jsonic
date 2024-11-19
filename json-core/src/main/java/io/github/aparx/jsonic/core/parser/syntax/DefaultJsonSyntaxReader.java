@@ -18,9 +18,7 @@ import org.checkerframework.org.apache.commons.text.CharacterPredicate;
 public class DefaultJsonSyntaxReader implements JsonSyntaxReader {
 
   public static final JsonSyntaxReader DEFAULT =
-      new DefaultJsonSyntaxReader((reader, traverser, msg) -> {
-        return new JsonParseError(msg, traverser.context());
-      });
+      new DefaultJsonSyntaxReader(ParseErrorFactory.DEFAULT);
 
   private static final String EXPECTED_SYMBOL_ERROR = "Expected symbol: %s (%s)";
   private static final String EXPECTED_CHARACTER_ERROR = "Expected character: %s";

@@ -48,7 +48,7 @@ public final class JsonicErrorMessageFactory {
     builder.append(BACKTRACE_ERROR_PREFIX)
         .append(backtrace).append('\n')
         .append(BACKTRACE_ERROR_PREFIX)
-        .append(" ".repeat(1 + backtrace.length() - BACKTRACE_ERROR_PREFIX.length()))
+        .append(" ".repeat(2 + backtrace.length() - BACKTRACE_ERROR_PREFIX.length()))
         .append("^ ");
   }
 
