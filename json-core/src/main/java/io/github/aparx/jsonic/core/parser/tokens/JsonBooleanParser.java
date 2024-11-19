@@ -21,17 +21,18 @@ public class JsonBooleanParser implements ComposableJsonParser<Boolean> {
 
   @Override
   public Boolean parse(JsonCharSourceTraverser traverser, JsonSyntaxReader syntaxReader) {
-    switch (traverser.current()) {
-      case 't':
+    return switch (traverser.current()) {
+      case 't' -> {
         syntaxReader.expectLiteral(traverser, "true");
-        return true;
-      case 'f':
+        yield true;
+      }
+      case 'f' -> {
         syntaxReader.expectLiteral(traverser, "false");
-        return false;
-      default:
-        throw syntaxReader.errorFactory().create(syntaxReader, traverser,
-            String.format(ERROR_UNEXPECTED_TOKEN, traverser.current()));
-    }
+        yield false;
+      }
+      default -> throw syntaxReader.errorFactory().create(syntaxReader, traverser,
+          String.format(ERROR_UNEXPECTED_TOKEN, traverser.current()));
+    };
   }
 
   @Override
